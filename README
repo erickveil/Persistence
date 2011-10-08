@@ -1,0 +1,6 @@
+Object Persistence
+
+Project requirements are to create a command line, menu driven inventory control system, where each inventory item is saved as a structure. The array of structures needs to be saved to a file for persistence between sessions. 
+
+This is based off a previous project where I devised an address book with the same interface but no persistence. Ive modified the project to meet the requirements of this one, and now need to add file read/write for the memebers of a vector of structures.
+
