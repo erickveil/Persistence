@@ -7,15 +7,39 @@ using namespace std;
 
 int touch(void);
 int SaveStr(string str);
+string LoadStr(void);
 
 int main(void)
 {
 	fstream file;
-	string sstring = "text to be saved.";
 
-	SaveStr(sstring);
+	string sstring = LoadStr();
+	cout<<sstring;
+
+	sstring = LoadStr();
+	cout<<sstring;
+
+
 	return 0;
 }
+
+string LoadStr(void)
+{
+	fstream file;
+	string buffer;
+	file.open(IOFILE,fstream::in);
+	if (file.fail())
+	{
+		cout<<"\nFile read\\write failed.\n";
+	}
+	else
+	{
+		getline(file,buffer);
+	}
+	file.close();
+	return buffer;
+}
+
 
 /*
 	requires: fstream,iostream,string,cstring
@@ -27,7 +51,7 @@ int SaveStr(string str)
 
 	// dynamicaly create an array of characters from the given string
 	char* cstrloc;
-	cstrloc = new char [str.size()+1];
+	cstrloc = new char [str.size()];
 	strcpy(cstrloc, str.c_str());
 
 	// open the file for writing
@@ -39,7 +63,7 @@ int SaveStr(string str)
 	}
 	else
 	{
-		file.write(cstrloc,str.size()+1);
+		file.write(cstrloc,str.size());
 	}
 	//clean up and return
 	file.close();
