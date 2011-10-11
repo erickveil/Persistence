@@ -13,10 +13,10 @@ int LoadStr(string* str, int position);
 typedef struct THING
 {
 	string str1;
-	string str2;
-	string str3;
+
 }THING;
 
+vector <THING> source;
 vector <THING> list;
 
 int main(void)
@@ -25,6 +25,23 @@ int main(void)
 	int element =0;
 	THING temp;
 
+	// load up the source vector
+	for(element=0;element<=3;++element)
+	{
+		getline(cin,temp.str1);
+		source.push_back(temp);
+	}
+
+
+	//saving the file
+	for(int t=0;t<source.size();++t)
+	{
+		SaveStr(source[t].str1);
+
+	}
+
+
+	// Loading the file
 	file.open(IOFILE,fstream::in);
 	if (file.fail())
 	{
@@ -33,21 +50,18 @@ int main(void)
 	}
 	while(!file.eof())
 	{
-
 		cout<<list.size()<<endl;
 
 		getline(file,temp.str1);
-		getline(file,temp.str2);
-		getline(file,temp.str3);
+
 
 		list.push_back(temp);
-
 	}
 
 	// output
 	for (element = 0; element<list.size() ; ++element)
 	{
-		cout<<list[element].str1<<endl<<list[element].str2<<endl<<list[element].str3<<endl;
+		cout<<list[element].str1<<endl;
 	}
 
 	file.close();
@@ -85,11 +99,12 @@ int SaveStr(string str)
 
 	// dynamicaly create an array of characters from the given string
 	char* cstrloc;
-	cstrloc = new char [str.size()];
+	cstrloc = new char [str.size()+1];
 	strcpy(cstrloc, str.c_str());
+	cstrloc[str.size()]='\n';
 
 	// open the file for writing
-	file.open(IOFILE,fstream::out);
+	file.open(IOFILE,fstream::out|fstream::app);
 	if (file.fail())
 	{
 		cout<<"\nFile read\\write failed.\n";
@@ -97,7 +112,7 @@ int SaveStr(string str)
 	}
 	else
 	{
-		file.write(cstrloc,str.size());
+		file.write(cstrloc,str.size()+1);
 	}
 	//clean up and return
 	file.close();

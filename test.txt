@@ -1,7 +1,4 @@
-text to be saved.
-That text was saved.
-here is more text.
-here we  go again
-and again
-hello world?
-This line is odd
+first
+second
+third
+fourth
