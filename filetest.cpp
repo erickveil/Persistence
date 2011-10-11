@@ -29,24 +29,22 @@ int main(void)
 	if (file.fail())
 	{
 		cout<<"\nFile read\\write failed.\n";
+		exit(777);
 	}
-	else
+	while(!file.eof())
 	{
-		while(!file.eof())
-		{
 
-			cout<<list.size()<<endl;
+		cout<<list.size()<<endl;
 
-			getline(file,temp.str1);
-			getline(file,temp.str2);
-			getline(file,temp.str3);
+		getline(file,temp.str1);
+		getline(file,temp.str2);
+		getline(file,temp.str3);
 
-			list.push_back(temp);
+		list.push_back(temp);
 
-		}
 	}
-	//
 
+	// output
 	for (element = 0; element<list.size() ; ++element)
 	{
 		cout<<list[element].str1<<endl<<list[element].str2<<endl<<list[element].str3<<endl;
