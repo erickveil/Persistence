@@ -22,9 +22,8 @@ vector <THING> list;
 int main(void)
 {
 	fstream file;
-
-	THING it;
-
+	int element =0;
+	THING temp;
 
 	file.open(IOFILE,fstream::in);
 	if (file.fail())
@@ -35,13 +34,23 @@ int main(void)
 	{
 		while(!file.eof())
 		{
-			getline(file,it.str1);
-			getline(file,it.str2);
-			getline(file,it.str3);
-			cout<<it.str1<<endl<<it.str2<<endl<<it.str3<<endl;
+
+			cout<<list.size()<<endl;
+
+			getline(file,temp.str1);
+			getline(file,temp.str2);
+			getline(file,temp.str3);
+
+			list.push_back(temp);
+
 		}
 	}
+	//
 
+	for (element = 0; element<list.size() ; ++element)
+	{
+		cout<<list[element].str1<<endl<<list[element].str2<<endl<<list[element].str3<<endl;
+	}
 
 	file.close();
 
