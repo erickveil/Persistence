@@ -9,6 +9,7 @@ using namespace std;
 int touch(void);
 int SaveStr(string str);
 int LoadStr(string* str, int position);
+void DeleteFile(void);
 
 typedef struct THING
 {
@@ -24,6 +25,8 @@ int main(void)
 	fstream file;
 	int element =0;
 	THING temp;
+
+	void DeleteFile(void);
 
 	// load up the source vector
 	for(element=0;element<=3;++element)
@@ -105,6 +108,7 @@ int SaveStr(string str)
 
 	// open the file for writing
 	file.open(IOFILE,fstream::out|fstream::app);
+	//file.open(IOFILE,fstream::out);
 	if (file.fail())
 	{
 		cout<<"\nFile read\\write failed.\n";
@@ -118,6 +122,14 @@ int SaveStr(string str)
 	file.close();
 	delete[] cstrloc;
 	return ret;
+}
+
+void DeleteFile(void)
+{
+	fstream file;
+	file.open(IOFILE,fstream::trunc);
+	//SaveStr("");
+	file.close();
 }
 
 /*
