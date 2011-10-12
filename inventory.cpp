@@ -133,25 +133,31 @@ int touch(void)
 void SaveFile()
 {
 	fstream file;
-	stringstream out;
-	string temp;
+
 	OpenFile(&file);
 	for(int element=0;element<list.size();++element)
 	{
+		stringstream out;	// stream was accumulating values, so they were scoped to here
+		string temp;
 		//members of the structure
 		SaveStr(list[element].decrip);
+
 		// converts int to string before saving
 		out<<list[element].qty;
 		temp=out.str();
 		SaveStr(temp);
+		out.str("");	// the magic command that clears out the stream
+
 		// works on floats
 		out<<list[element].cost;
 		temp=out.str();
 		SaveStr(temp);
+		out.str("");
 
 		out<<list[element].price;
 		temp=out.str();
 		SaveStr(temp);
+		out.str("");
 
 		SaveStr(list[element].date);
 	}
