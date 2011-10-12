@@ -241,14 +241,17 @@ int LoadFile(void)
 	{
 		// one getline statement for each member of the structure
 		getline(file,temp.decrip);
-		getline(file,temp_in);
-		temp.qty=atoi(temp_in.c_str());
-		getline(file,temp_in);
-		temp.cost=atof(temp_in.c_str());
-		getline(file,temp_in);
-		temp.price=atof(temp_in.c_str());
-		getline(file,temp.date);
-		list.push_back(temp);
+		if(!temp.decrip.empty())
+		{
+			getline(file,temp_in);
+			temp.qty=atoi(temp_in.c_str());
+			getline(file,temp_in);
+			temp.cost=atof(temp_in.c_str());
+			getline(file,temp_in);
+			temp.price=atof(temp_in.c_str());
+			getline(file,temp.date);
+			list.push_back(temp);
+		}
 	}
 	file.close();
 	return list.size();
