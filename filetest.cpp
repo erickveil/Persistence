@@ -8,8 +8,9 @@ using namespace std;
 
 int touch(void);
 int SaveStr(string str);
-int LoadStr(string* str, int position);
+int LoadFile(void);
 void DeleteFile(void);
+int GetFileSize(fstream* file);
 
 typedef struct THING
 {
@@ -26,7 +27,7 @@ int main(void)
 	int element =0;
 	THING temp;
 
-	void DeleteFile(void);
+	DeleteFile();
 
 	// load up the source vector
 	for(element=0;element<=3;++element)
@@ -40,7 +41,6 @@ int main(void)
 	for(int t=0;t<source.size();++t)
 	{
 		SaveStr(source[t].str1);
-
 	}
 
 
@@ -53,11 +53,8 @@ int main(void)
 	}
 	while(!file.eof())
 	{
-		cout<<list.size()<<endl;
-
+		// one getline statement for each member of the structure
 		getline(file,temp.str1);
-
-
 		list.push_back(temp);
 	}
 
@@ -72,39 +69,64 @@ int main(void)
 	return 0;
 }
 
-int LoadFile(string* str, int position)
+/*
+	LoadFile()
+	Erick Veil
+	10-11-11
+	pre: IOFILE constant defined as the name of the file to load,
+	a structure and its members, a global vector called list
+	post: vector should be of type THING structures, the members of
+	which are loaded with the contents of IOFILE
+	note: IOFILE, THING, list, and str1 member function of THING
+	will all have to be customised based on the program this function is
+	included in.
+	TODO: make this a more modular function to be used in code with less
+	modification.
+	requires: fstream, iostream
+*/
+int LoadFile(void)
 {
+	THING temp;
 	fstream file;
-	int ret = 0;
 	file.open(IOFILE,fstream::in);
 	if (file.fail())
 	{
 		cout<<"\nFile read\\write failed.\n";
+		exit(777);
 	}
-	else
+	while(!file.eof())
 	{
-		file.seekg(position);
-		getline(file,*str);
-		ret=file.tellg();
+		// one getline statement for each member of the structure
+		getline(file,temp.str1);
+		list.push_back(temp);
 	}
 	file.close();
-	return ret;
+	return list.size();
 }
 
 
 /*
+	SaveStr()
+	Erick VEil
+	10-11-11
+	pre: a string to be saved to a file, a constant IOFILE
+	with the name of the file
+	post: appends the string to the end of the file with a
+	newline character after it. returns either 0 if failed,
+	or the size of the string written.
 	requires: fstream,iostream,string,cstring
 */
 int SaveStr(string str)
 {
-	int ret=1;
+	int ret;
 	fstream file;
+	ret=str.size()+1;
 
 	// dynamicaly create an array of characters from the given string
 	char* cstrloc;
-	cstrloc = new char [str.size()+1];
+	cstrloc = new char [ret];
 	strcpy(cstrloc, str.c_str());
-	cstrloc[str.size()]='\n';
+	cstrloc[ret-1]='\n';
 
 	// open the file for writing
 	file.open(IOFILE,fstream::out|fstream::app);
@@ -116,7 +138,7 @@ int SaveStr(string str)
 	}
 	else
 	{
-		file.write(cstrloc,str.size()+1);
+		file.write(cstrloc,ret);
 	}
 	//clean up and return
 	file.close();
@@ -124,15 +146,46 @@ int SaveStr(string str)
 	return ret;
 }
 
+/*
+	GetFileSize()
+	Erick Veil
+	10-11-11
+	pre: pointer to an open file
+	post: returns the size of a file in bytes
+	requires fstream
+*/
+int GetFileSize(fstream* file)
+{
+	int size;
+	file->seekg(0,ifstream::end);
+	size=file->tellg();
+	file->seekg(0);
+	return size;
+}
+
+/*
+	DeleteFile()
+	Erick Veil
+	10-11-11
+	pre: a constant IOFILE with the name of the file
+	Clears a file of all its contents.
+	requires fstream
+*/
 void DeleteFile(void)
 {
-	fstream file;
-	file.open(IOFILE,fstream::trunc);
-	//SaveStr("");
+	ofstream file;
+	file.open(IOFILE,ios::trunc);
 	file.close();
 }
 
 /*
+	touch()
+	Erick Veil
+	10-11-11
+	pre: a constant IOFILE with the name of the file
+	post: returns 1 if successful, 0 if not
+	Acts as a unix touch command, creating the file if
+	it does not exist.
 	requires: fstream,iostream
 */
 int touch(void)

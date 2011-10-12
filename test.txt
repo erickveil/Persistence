@@ -1,21 +1,4 @@
-appending is for chickens
-first
-second
-third
-fourth
-next
-after that
-and again
-one more
-new file
-next line
-square
+pencil
+eraser
 circle
-does this do it?
-how bout this?
-car
-tree
-what now?
-does this do it?
-is it erased?
-are we done?
+square
