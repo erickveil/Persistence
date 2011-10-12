@@ -37,7 +37,7 @@ enum {NEW=1,EDIT,SHOW,QUIT};
 enum {DESC=1,QTY,COST,PRICE,DATE};
 
 void DisplayMenu(void);
-RECORD PromptRecordEntry(bool newrec, fstream* fstrm, int recordnumber=0);
+RECORD PromptRecordEntry(bool newrec, int recordnumber=0);
 void DisplayRecordList(void);
 void DisplayRecord(RECORD entry);
 int PromptValidInt(int low, int high, string prompt);
@@ -47,31 +47,34 @@ double PromptValidDouble(double low, string prompt);
 int GetYN(string msg);
 void Pause(void);
 string ConvertLineLowerCase(string line);
+
 void OpenFile(fstream* fstrm);
 void SaveVector(fstream* fstrm);
 int LoadFile(void);
+void DeleteFile(void);
+int SaveStr(string str);
+void SaveFile();
 
 int main(void)
 {
     int selection;
-	fstream fstrm;
-
-	OpenFile(&fstrm);
+	LoadFile();
 
     do{
         DisplayMenu();
         switch(PromptValidInt(NEW, QUIT, "\n\tPlease enter a number from the menu: "))
         {
             case NEW:
-                list.push_back(PromptRecordEntry(1,&fstrm));
+                list.push_back(PromptRecordEntry(1));
                 break;
             case EDIT:
                 DisplayRecordList();
                 if(list.size()!=0)
                 {
                     selection=PromptValidInt(0,list.size()-1,"\n\n\tEnter the number of the record to edit: ");
-                    list[selection]=PromptRecordEntry(0,&fstrm,selection);
+                    list[selection]=PromptRecordEntry(0,selection);
                 }
+                DeleteFile();
                 break;
             case SHOW:
                 DisplayRecordList();
@@ -85,8 +88,99 @@ int main(void)
         }
     }while(GetYN("\n\tBack to main menu? (Y/N): "));
     Pause();
-	fstrm.close();
     return 0;
+}
+
+/*
+	SaveFile()
+	Erick Veil
+	10-11-11
+	pre: IOFILE as the input file name, list as a vector
+	of structures
+	post: converts all members of each structure in the vector to
+	strings, and appends them to the target file.
+*/
+void SaveFile()
+{
+	fstream file;
+	stringstream out;
+	string temp;
+	OpenFile(&file);
+	for(int element=0;element<list.size();++element)
+	{
+		//members of the structure
+		SaveStr(list[element].decrip);
+		// converts int to string before saving
+		out<<list[element].qty;
+		temp=out.str();
+		SaveStr(temp);
+		// works on floats
+		out<<list[element].cost;
+		temp=out.str();
+		SaveStr(temp);
+
+		out<<list[element].price;
+		temp=out.str();
+		SaveStr(temp);
+
+		SaveStr(list[element].date);
+	}
+}
+
+/*
+	SaveStr()
+	Erick VEil
+	10-11-11
+	pre: a string to be saved to a file, a constant IOFILE
+	with the name of the file
+	post: appends the string to the end of the file with a
+	newline character after it. returns either 0 if failed,
+	or the size of the string written.
+	requires: fstream,iostream,string,cstring
+*/
+int SaveStr(string str)
+{
+	int ret;
+	fstream file;
+	ret=str.size()+1;
+
+	// dynamicaly create an array of characters from the given string
+	char* cstrloc;
+	cstrloc = new char [ret];
+	strcpy(cstrloc, str.c_str());
+	cstrloc[ret-1]='\n';
+
+	// open the file for writing
+	file.open(IOFILE,fstream::out|fstream::app);
+	//file.open(IOFILE,fstream::out);
+	if (file.fail())
+	{
+		cout<<"\nFile read\\write failed.\n";
+		ret = 0;
+	}
+	else
+	{
+		file.write(cstrloc,ret);
+	}
+	//clean up and return
+	file.close();
+	delete[] cstrloc;
+	return ret;
+}
+
+/*
+	DeleteFile()
+	Erick Veil
+	10-11-11
+	pre: a constant IOFILE with the name of the file
+	Clears a file of all its contents.
+	requires fstream
+*/
+void DeleteFile(void)
+{
+	ofstream file;
+	file.open(IOFILE,ios::trunc);
+	file.close();
 }
 
 /*
@@ -116,7 +210,6 @@ int LoadFile(void)
 	while(!file.eof())
 	{
 		// one getline statement for each member of the structure
-		//{DESC=1,QTY,COST,PRICE,DATE};
 		getline(file,temp.decrip);
 		getline(file,temp_in);
 		temp.qty=atoi(temp_in.c_str());
@@ -276,7 +369,7 @@ double PromptValidDouble(double low, string prompt)
         edit the data for and allows data entry. New records cannot be
         left with empty fields.
 */
-RECORD PromptRecordEntry(bool newrec, fstream* fstrm, int recordnumber)
+RECORD PromptRecordEntry(bool newrec, int recordnumber)
 {
     RECORD entry;
     entry.cost= -1.0;
@@ -332,7 +425,6 @@ RECORD PromptRecordEntry(bool newrec, fstream* fstrm, int recordnumber)
         else
             incomplete=0;
     }while(incomplete);
-	SaveVector(fstrm);
     return entry;
 }
 
