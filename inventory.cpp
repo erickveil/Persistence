@@ -1,6 +1,6 @@
 /*
     CH11PC4
-    Customer Accounts
+    Inventory
     Erick Veil
     9-28-11
     The program should use an array of at least 20 structures.
@@ -22,6 +22,7 @@
 using namespace std;
 
 #define PAGESIZE 16
+#define IOFILE "inventory.txt"
 
 typedef struct RECORD
 {
@@ -48,6 +49,7 @@ void Pause(void);
 string ConvertLineLowerCase(string line);
 void OpenFile(fstream* fstrm);
 void SaveVector(fstream* fstrm);
+int LoadFile(void);
 
 int main(void)
 {
@@ -85,6 +87,48 @@ int main(void)
     Pause();
 	fstrm.close();
     return 0;
+}
+
+/*
+	LoadFile()
+	Erick Veil
+	10-11-11
+	pre: IOFILE constant defined as the name of the file to load,
+	a structure and its members, a global vector called list
+	post: vector should be of type THING structures, the members of
+	which are loaded with the contents of IOFILE
+	note: and str1 member function of THING
+	will all have to be customised based on the program this function is
+	included in.
+	requires: fstream, iostream
+*/
+int LoadFile(void)
+{
+	RECORD temp;
+	fstream file;
+	string temp_in;
+	file.open(IOFILE,fstream::in);
+	if (file.fail())
+	{
+		cout<<"\nFile read\\write failed: LoadFile()\n";
+		exit(777);
+	}
+	while(!file.eof())
+	{
+		// one getline statement for each member of the structure
+		//{DESC=1,QTY,COST,PRICE,DATE};
+		getline(file,temp.decrip);
+		getline(file,temp_in);
+		temp.qty=atoi(temp_in.c_str());
+		getline(file,temp_in);
+		temp.cost=atof(temp_in.c_str());
+		getline(file,temp_in);
+		temp.price=atof(temp_in.c_str());
+		getline(file,temp.date);
+		list.push_back(temp);
+	}
+	file.close();
+	return list.size();
 }
 
 /*
@@ -153,7 +197,7 @@ int PromptValidInt(int low, int high, string prompt)
     Erick Veil
     10-05-11
 	Overloaded for optional upper limits
-    pre: low is the lowest allowed value to be input. 
+    pre: low is the lowest allowed value to be input.
         prompt is the output prompt given
     post: validated input as an integer within the specified range and
         returns the result
@@ -422,15 +466,16 @@ int GetYN(string msg)
 }
 
 /*
-    LoadFile()
+    OpenFile()
     Erick Veil
     9-21-11
     pre: provide a pointer to a file object and the name of a file
     post: opens the file and validates that it was opened. exits the program if not
+    10-11-11: ammended to use IOFILE as its filename
 */
 void OpenFile(fstream* fstrm)
 {
-	fstrm->open("save.sav",fstream::in|fstream::out);
+	fstrm->open(IOFILE,fstream::in|fstream::out);
     if(fstrm->fail())
     {
         cout<<"\n\nfile open failed. aborting.\n\n";
