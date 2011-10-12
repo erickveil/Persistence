@@ -54,10 +54,12 @@ int LoadFile(void);
 void DeleteFile(void);
 int SaveStr(string str);
 void SaveFile();
+int touch(void);
 
 int main(void)
 {
     int selection;
+    touch(); // just in case the file needs to be created and doesnt exist;
 	LoadFile();
 
     do{
@@ -66,6 +68,8 @@ int main(void)
         {
             case NEW:
                 list.push_back(PromptRecordEntry(1));
+                DeleteFile();
+                SaveFile();
                 break;
             case EDIT:
                 DisplayRecordList();
@@ -75,6 +79,7 @@ int main(void)
                     list[selection]=PromptRecordEntry(0,selection);
                 }
                 DeleteFile();
+                SaveFile();
                 break;
             case SHOW:
                 DisplayRecordList();
@@ -90,6 +95,31 @@ int main(void)
     Pause();
     return 0;
 }
+
+/*
+	touch()
+	Erick Veil
+	10-11-11
+	pre: a constant IOFILE with the name of the file
+	post: returns 1 if successful, 0 if not
+	Acts as a unix touch command, creating the file if
+	it does not exist.
+	requires: fstream,iostream
+*/
+int touch(void)
+{
+	int ret=1;
+	fstream file;
+	file.open(IOFILE,fstream::in|fstream::out|fstream::app);
+	if (file.fail())
+	{
+		cout<<"\nFile read\\write failed.\n";
+		ret = 0;
+	}
+	file.close();
+	return ret;
+}
+
 
 /*
 	SaveFile()
@@ -575,6 +605,9 @@ void OpenFile(fstream* fstrm)
     }
 }
 
+/* This one didnt end up getting used. There's some stream based typedef
+conversion in here I want to look closer at, though, so I'm keeping it around.
+*/
 void SaveVector(fstream* fstrm)
 {
 	stringstream num;
@@ -592,6 +625,9 @@ void SaveVector(fstream* fstrm)
 	}
 }
 
+/* another unused function that was pre-file exploration.
+Keeping for comparison studies later
+*/
 void LoadVector(fstream* fstrm)
 {
 
@@ -600,7 +636,7 @@ void LoadVector(fstream* fstrm)
 	string buffy;
 
 	legnth = fstrm->tellg();
-	buffer = new char [legnth];
+	buffer = new char [legnth];// delete all allocated space
 	fstrm->seekg(0);
 	//for(unsigned int element = 0;element < list.size(); ++element)
 	//{
